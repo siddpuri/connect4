@@ -1,13 +1,12 @@
-// Game constants
-const depth = 8;
-
+// AutoPlayer constants
 function randomElement(array) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
 // AutoPlayer class
 export default class AutoPlayer {
-    constructor(game) {
+    constructor(config, game) {
+        this.config = config;
         this.game = game;
     }
 
@@ -18,7 +17,7 @@ export default class AutoPlayer {
             const move = this.game.getMove(col);
             if (move) {
                 const oldBoardValue = this.game.makeMove(move);
-                const value = -this.minMax(depth - 1);
+                const value = -this.minMax(this.config.depth - 1);
                 if (value > bestValue) {
                     bestValue = value;
                     bestMoves = [move];
@@ -32,7 +31,7 @@ export default class AutoPlayer {
     }
 
     minMax(depth) {
-        if (depth == 0 || this.game.hasWon) {
+        if (depth == 0 || this.game.isGameOver) {
             return this.game.effectiveValue;
         }
         let bestValue = -Infinity;

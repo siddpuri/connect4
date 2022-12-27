@@ -1,9 +1,6 @@
 // Game constants
 const numRows = 6;
 const numCols = 7;
-const weights = [0, 1, 5, 20, Infinity];
-const numDice = 2;
-const numSides = 3;
 
 function makeArray(size, f) {
     return Array.from({ length: size }, f);
@@ -11,34 +8,25 @@ function makeArray(size, f) {
 
 // Game class
 export default class Game {
-    constructor() {
-        this.initializeBoard();
+    constructor(config) {
+        this.config = config;
+        this.weights = [0, 1, config.weight2, config.weight3, Infinity];
         this.initializeQuads();
         this.resetGameState();
     }
 
     get numCols() { return numCols; }
     get numRows() { return numRows; }
-    get hasWon() { return Math.abs(this.boardValue) == Infinity; }
-    get isActive() { return !this.isThinking && !this.hasWon && !this.isFull; }
+    get isGameOver() { return this.isFull || Math.abs(this.boardValue) == Infinity; }
+    get winner() { return this.boardValue == Infinity? 1 : this.boardValue == -Infinity? 2 : 0; }
 
     get effectiveValue() {
-        let result = this.boardValue;
-        if (this.currentPlayer != 1) {
-            result = -result;
-        }
-        for (let i = 0; i < numDice; i++) {
-            result += (Math.random() - 0.5) * numSides;
-        }
-        return result;
+        let result = this.boardValue + this.config.randomness;
+        return this.currentPlayer == 1? result : -result;
     }
-
+    
     getChip(row, col) {
         return this.board[row][col];
-    }
-
-    initializeBoard() {
-        this.board = makeArray(numRows, () => makeArray(numCols, () => 0));
     }
 
     initializeQuads() {
@@ -64,12 +52,12 @@ export default class Game {
             this.gridToQuads[row + i * dRow][col + i * dCol].push(quadNumber);
         }
     }
-    
+
     resetGameState() {
+        this.board = makeArray(numRows, () => makeArray(numCols, () => 0));
         this.quads = makeArray(this.numQuads, () => [0, 0, 0]);
         this.boardValue = 0;
         this.currentPlayer = 1;
-        this.isThinking = false;
         this.isFull = false;
     }
 
@@ -132,10 +120,19 @@ export default class Game {
         if (quad[1] != 0 && quad[2] != 0) {
             return 0;
         }
-        let value = weights[quad[1] + quad[2]];
+        let value = this.weights[quad[1] + quad[2]];
         if (quad[2] != 0) {
             value *= -1;
         }
         return value;
+    }
+
+    updateConfiguration() {
+        this.weights[2] = this.config.weight2;
+        this.weights[3] = this.config.weight3;
+        this.boardValue = 0;
+        for (let quad of this.quads) {
+            this.boardValue += this.getQuadValue(quad);
+        }
     }
 }

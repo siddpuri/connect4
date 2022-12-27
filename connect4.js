@@ -1,11 +1,19 @@
+import Configuration from "./configuration.js";
 import Game from "./game.js";
 import AutoPlayer from "./autoplayer.js";
 import Display from "./display.js";
 
+let config;
+let game;
+let autoPlayer;
+let display;
+
 // Start the game
-window.onload = function() {
-    let game = new Game();
-    let autoPlayer = new AutoPlayer(game);
-    let display = new Display(game, autoPlayer);
+window.onload = async function() {
+    config = new Configuration();
+    game = new Game(config);
+    autoPlayer = new AutoPlayer(config, game);
+    display = new Display(config, game, autoPlayer);
     display.activateGame();
+    await display.playTournaments();
 }
