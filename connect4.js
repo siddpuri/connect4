@@ -15,5 +15,4 @@ window.onload = async function() {
     autoPlayer = new AutoPlayer(config, game);
     display = new Display(config, game, autoPlayer);
     display.activateGame();
-    await display.playTournaments();
 }

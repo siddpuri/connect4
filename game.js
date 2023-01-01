@@ -18,7 +18,16 @@ export default class Game {
     get numCols() { return numCols; }
     get numRows() { return numRows; }
     get isGameOver() { return this.isFull || Math.abs(this.boardValue) == Infinity; }
-    get winner() { return this.boardValue == Infinity? 1 : this.boardValue == -Infinity? 2 : 0; }
+
+    get winner() {
+        if (this.boardValue == Infinity) {
+            return 1;
+        } else if (this.boardValue == -Infinity) {
+            return 2;
+        } else {
+            return 0;
+        }
+    }
 
     get effectiveValue() {
         let result = this.boardValue + this.config.randomness;

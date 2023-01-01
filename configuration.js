@@ -1,12 +1,9 @@
 // Configuration class
 export default class Configuration {
-    configurations = [
-        { depth: 6, weight2: 5, weight3: 20, numDice: 5, numSides: 2 },
-        { depth: 6, weight2: 4, weight3: 20, numDice: 5, numSides: 2 },
-    ];
+    configurations = [{ depth: 7, weight2: 5, weight3: 16, numDice: 5, numSides: 2 }];
 
     constructor() {
-        this.configuration = this.configurations[0];
+        this.setConfiguration(0);
     }
 
     get depth() { return this.configuration.depth; }
@@ -19,6 +16,11 @@ export default class Configuration {
             result += Math.random() * this.configuration.numSides;
         }
         return result;
+    }
+
+    createNewConfiguration() {
+        this.configurations.push({ ... configurations[0] });
+        return this.configurations.length - 1;
     }
 
     setConfiguration(n) {
